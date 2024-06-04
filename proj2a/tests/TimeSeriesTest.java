@@ -55,4 +55,117 @@ public class TimeSeriesTest {
         assertThat(totalPopulation.years()).isEmpty();
         assertThat(totalPopulation.data()).isEmpty();
     }
-} 
+
+    @Test
+    public void testTimeSeriesCopy() {
+        TimeSeries original = new TimeSeries();
+        original.put(1400, 10.0);
+        original.put(1500, 20.0);
+        original.put(1600, 30.0);
+        original.put(1700, 40.0);
+        original.put(1800, 50.0);
+        original.put(1900, 60.0);
+        
+        TimeSeries copied = new TimeSeries(original, 1500, 1800);
+        assertThat(copied.size()).isEqualTo(4);
+        assertThat(copied.get(1400)).isNull();
+        assertThat(copied.get(1500)).isEqualTo(20);
+        assertThat(copied.get(1600)).isEqualTo(30);
+        assertThat(copied.get(1700)).isEqualTo(40);
+        assertThat(copied.get(1800)).isEqualTo(50);
+        assertThat(copied.get(1900)).isNull();
+        assertThat(copied.get(2000)).isNull();
+    }
+
+    @Test
+    public void testTimeSeriesCopyWithNullValues() {
+        TimeSeries original = new TimeSeries();
+        original.put(1400, null);
+        original.put(1500, 20.0);
+        original.put(1600, null);
+
+        TimeSeries copied = new TimeSeries(original, 1400, 1600);
+
+        assertThat(copied.size()).isEqualTo(3);
+        assertThat(copied.get(1400)).isNull();
+        assertThat(copied.get(1500)).isEqualTo(20.0);
+        assertThat(copied.get(1600)).isNull();
+    }
+
+    @Test   
+    public void testTimeSeriesCopyEmptyRange() {
+        TimeSeries original = new TimeSeries();
+        original.put(1400, 10.0);
+        original.put(1500, 20.0);
+        original.put(1600, 30.0);
+
+        TimeSeries copied = new TimeSeries(original, 1700, 1800);
+
+        assertThat(copied.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void testDividedByBasic() {
+        TimeSeries ts1 = new TimeSeries();
+        ts1.put(1400, 10.0);
+        ts1.put(1500, 20.0);
+        ts1.put(1600, 30.0);
+
+        TimeSeries ts2 = new TimeSeries();
+        ts2.put(1400, 2.0);
+        ts2.put(1500, 4.0);
+        ts2.put(1600, 6.0);
+
+        TimeSeries result = ts1.dividedBy(ts2);
+
+        assertThat(result.get(1400)).isWithin(1E-10).of(5.0);
+        assertThat(result.get(1500)).isWithin(1E-10).of(5.0);
+        assertThat(result.get(1600)).isWithin(1E-10).of(5.0);
+    }
+
+    @Test 
+    public void testDividedByMissingValue() {
+        TimeSeries ts1 = new TimeSeries();
+        ts1.put(1400, 10.0);
+        ts1.put(1500, 20.0);
+        ts1.put(1600, 30.0);
+        
+        TimeSeries ts2 = new TimeSeries();
+        ts2.put(1400, 2.0);
+        ts2.put(1600, 6.0);
+
+        try {
+            ts1.dividedBy(ts2);
+        } catch (IllegalArgumentException e){
+        }
+    }
+
+    @Test
+    public void testDividedByZeroValue() {
+        TimeSeries ts1 = new TimeSeries();
+        ts1.put(1400, 10.0);
+        ts1.put(1600, 30.0);
+        
+        TimeSeries ts2 = new TimeSeries();
+        ts2.put(1400, 2.0);
+        ts2.put(1600, 0.0);
+    }
+
+    @Test 
+    public void testDividedBy() {
+        TimeSeries ts1 = new TimeSeries();
+        ts1.put(1400, 10.0);
+        ts1.put(1600, 30.0);
+
+        TimeSeries ts2 = new TimeSeries();
+        ts2.put(1400, 2.0);
+        ts2.put(1500, 4.0);
+        ts2.put(1600, 6.0);
+
+        TimeSeries result = ts1.dividedBy(ts2);
+
+        assertThat(result.get(1400)).isWithin(1E-10).of(5.0);
+        assertThat(result.get(1500)).isNull();
+        assertThat(result.get(1600)).isWithin(1E-10).of(5.0);
+    }
+}
