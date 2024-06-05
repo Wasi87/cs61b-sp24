@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class PercolationTest {
@@ -78,11 +80,85 @@ public class PercolationTest {
         assertThat(p.percolates()).isTrue();
     }
 
-    // TODO: Using the given tests above as a template,
-    //       write some more tests and delete the fail() line
-    @Test
-    public void yourFirstTestHere() {
-        fail("Did you write your own tests?");
+    private void batchOpen(Percolation p, String[] drawing) {
+        class Pos {
+            int x;
+            int y;
+
+            public Pos(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+        Pos[] opens = new Pos[16];
+
+        for (int y = 0; y < drawing.length; y++) {
+            for (int x = 0; x < drawing.length; x++) {
+                char c = drawing[y].charAt(x);
+                if (c == '.') {
+                    continue;
+                }
+                int n = c - '0';
+                opens[n] = new Pos(x, y);
+            }
+        }
+
+        for (Pos pos : opens) {
+            if (pos == null) {
+                break;
+            }
+            p.open(pos.y, pos.x);
+        }
     }
 
+    private void assertCellState(Percolation p, String[] drawing) {
+        String[] actual = new String[drawing.length];
+
+        for (int y = 0; y < drawing.length; y++) {
+            actual[y] = new String();
+            for (int x = 0; x < drawing.length; x++) {
+                if (p.isOpen(y, x)) {
+                    if (p.isFull(y, x)) {
+                        actual[y] += '@';
+                    } else {
+                        actual[y] += '+';
+                    }
+                } else {
+                    actual[y] += '.';
+                }
+            }
+        }
+
+        assertThat(String.join("\n", actual)).isEqualTo(String.join("\n", drawing));
+    }
+
+    @Test
+    public void diagonalLeft() {
+        Percolation p = new Percolation(2);
+
+        batchOpen(p, new String[] {
+            ".0",
+            "1.",
+        });
+        assertCellState(p, new String[] {
+            ".@",
+            "+.",
+        });
+        assertThat(p.percolates()).isFalse();
+    }
+    
+    @Test
+    public void diagonalRight() {
+        Percolation p = new Percolation(2);
+
+        batchOpen(p, new String[] {
+            "0.",
+            ".1",
+        });
+        assertCellState(p, new String[] {
+            "@.",
+            ".+",
+        });
+        assertThat(p.percolates()).isFalse();
+    }
 }
