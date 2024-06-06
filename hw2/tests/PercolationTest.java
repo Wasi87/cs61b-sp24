@@ -1,9 +1,6 @@
 import org.junit.jupiter.api.Test;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class PercolationTest {
 
@@ -161,4 +158,76 @@ public class PercolationTest {
         });
         assertThat(p.percolates()).isFalse();
     }
+
+    @Test
+    public void testInitialGrid() {
+        Percolation perc = new Percolation(3);
+        String[] expected = {
+            "...",
+            "...",
+            "..."
+        };
+        assertCellState(perc, expected);
+    }
+
+    @Test
+    public void testSingleOpenSite() {
+        Percolation perc = new Percolation(3);
+        perc.open(1, 1);
+        String[] expected = {
+            "...",
+            ".+.",
+            "..."
+        };
+        assertCellState(perc, expected);
+    }
+
+    @Test
+    public void testPercolation() {
+        Percolation perc = new Percolation(3);
+        perc.open(0, 0);
+        perc.open(1, 0);
+        perc.open(2, 0);
+        assertThat(perc.percolates()).isTrue();
+
+        String[] expected = {
+            "@..",
+            "@..",
+            "@.."
+        };
+        assertCellState(perc, expected);
+    }
+
+
+    @Test
+    public void testNoPercolation() {
+        Percolation perc = new Percolation(3);
+        perc.open(0, 0);
+        perc.open(1, 0);
+        assertThat(perc.percolates()).isFalse();
+
+        String[] expected = {
+            "@..",
+            "@..",
+            "..."
+        };
+        assertCellState(perc, expected);
+    }
+
+    @Test
+    public void testBackwash() {
+        Percolation perc = new Percolation(3);
+        perc.open(0, 0);
+        perc.open(1, 0);
+        perc.open(2, 0);
+        perc.open(2, 2);
+
+        String[] expected = {
+            "@..",
+            "@..",
+            "@.+"
+        };
+        assertCellState(perc, expected);
+    }
 }
+
