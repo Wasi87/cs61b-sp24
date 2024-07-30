@@ -7,6 +7,7 @@ import tileengine.Tileset;
 import utils.FileUtils;
 
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -236,16 +237,40 @@ public class GameOfLife {
         TETile[][] nextGen = new TETile[width][height];
         // The board is filled with Tileset.NOTHING
         fillWithNothing(nextGen);
+        
+        int[] dx = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] dy = {-1, 0, 1, -1, 1, -1, 0, 1};
 
-        // TODO: Implement this method so that the described transitions occur.
-        // TODO: The current state is represented by TETiles[][] tiles and the next
-        // TODO: state/evolution should be returned in TETile[][] nextGen.
+        int tHeight = tiles[0].length;
+        int tWidth = tiles.length;
 
-
-
-
-        // TODO: Returns the next evolution in TETile[][] nextGen.
-        return null;
+        for (int x = 0; x < tHeight; x++) {
+            for (int y = 0; y < tWidth; y++) {
+                int total = 0;
+                // System.out.printf("x %d, ", x);
+                // System.out.printf("y %d, ", y);
+                for (int i = 0; i < dx.length; i++) {
+                    int newX = x + dx[i];
+                    int newY = y + dy[i];
+                    if ( newX >= 0 && newX < width && newY >= 0 && newY < height) {
+                        if (tiles[newX][newY] != Tileset.NOTHING) {
+                            total++;
+                        }
+                    }
+                }
+                // System.out.printf("total %d\n", total);
+                if (tiles[x][y] != Tileset.NOTHING) {
+                    if ( total == 2 || total == 3 ) {
+                        nextGen[x][y] = Tileset.CELL;
+                    } 
+                } else {
+                    if ( total == 3 ) {
+                        nextGen[x][y] = Tileset.CELL;
+                    }
+                }
+            }
+        }
+        return nextGen;
     }
 
     /**
@@ -266,20 +291,16 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public void saveBoard() {
-        // TODO: Save the dimensions of the board into the first line of the file.
-        // TODO: The width and height should be separated by a space, and end with "\n".
+        StringBuilder builder = new StringBuilder();
+        builder.append(width).append(" ").append(height).append("\n");
 
-
-
-        // TODO: Save the current state of the board into save.txt. You should
-        // TODO: use the provided FileUtils functions to help you. Make sure
-        // TODO: the orientation is correct! Each line in the board should
-        // TODO: end with a new line character.
-
-
-
-
-
+        for (int y = height-1 ; y >= 0; y--) {
+            for (int x = 0; x < width; x++) {
+                builder.append(currentState[x][y] == Tileset.NOTHING ? "0":"1");
+            }
+            builder.append("\n");
+        }
+        FileUtils.writeFile("src/save.txt", builder.toString());
     }
 
     /**
@@ -287,27 +308,28 @@ public class GameOfLife {
      * 0 represents NOTHING, 1 represents a CELL.
      */
     public TETile[][] loadBoard(String filename) {
-        // TODO: Read in the file.
+        String contents = FileUtils.readFile(filename);
 
-        // TODO: Split the file based on the new line character.
+        String[] lines = contents.split("\n");
+        String[] firstLine = lines[0].split(" ");
+        String[] savedBoard = Arrays.copyOfRange(lines, 1, lines.length);
 
-        // TODO: Grab and set the dimensions from the first line.
+        int lWidth = Integer.valueOf(firstLine[0]);
+        int lHeight = Integer.valueOf(firstLine[1]);
 
-        // TODO: Create a TETile[][] to load the board from the file into
-        // TODO: and any additional variables that you think might help.
+        TETile[][] loadState = new TETile[lWidth][lHeight];
 
+        fillWithNothing(loadState);
 
-        // TODO: Load the state of the board from the given filename. You can
-        // TODO: use the provided builder variable to help you and FileUtils
-        // TODO: functions. Make sure the orientation is correct!
-
-
-
-
-        // TODO: Return the board you loaded. Replace/delete this line.
-        return null;
+        for (int y = 0; y < lHeight; y++) {
+            for (int x = 0; x < lWidth; x++) {
+                if (savedBoard[y].charAt(x) == '1') {
+                    loadState[x][lHeight - 1 - y] = Tileset.CELL;
+                }
+            }
+        }
+        return loadState;
     }
-
     /**
      * This is where we run the program. DO NOT MODIFY THIS METHOD!
      * @param args
