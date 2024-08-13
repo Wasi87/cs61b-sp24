@@ -40,6 +40,68 @@ public class TestMultiWordK0Hyponyms {
         assertThat(actual).isEqualTo(expected);
     }
 
-    // TODO: Add more unit tests (including edge case tests) here.
+    // 相同單字
+    @Test
+    public void testChangeAndChangeK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+                VERY_SHORT_WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("change", "change");
 
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[alteration, change, demotion, increase, jump, leap, modification, saltation, transition, variation]";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    // 無相同下義詞
+    @Test
+    public void testDemotionAndMutationK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+                VERY_SHORT_WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("demotion", "mutation");
+
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[]";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    // 同節點
+    @Test
+    public void testLeapAndJumpK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+                VERY_SHORT_WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("leap", "jump");
+
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[jump, leap, saltation]";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    // 多節點單字+多節點單字
+    @Test
+    public void testAlterationAndModificationK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+                VERY_SHORT_WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("alteration", "modification");
+
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[adjustment, alteration, change, conversion, increase, jump, leap, modification, mutation, saltation, transition]";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    // 無共享節點 但有相同下義詞
+    @Test
+    public void testActionAndOccurrentK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+                VERY_SHORT_WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("action", "occurrent");
+
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[change]";
+        assertThat(actual).isEqualTo(expected);
+    }
 }

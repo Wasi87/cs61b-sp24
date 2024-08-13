@@ -28,5 +28,54 @@ public class TestOneWordK0Hyponyms {
         assertThat(actual).isEqualTo(expected);
     }
 
-    // TODO: Add more unit tests (including edge case tests) here.
+    @Test
+    public void testHumanActionK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("human_action");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[act, action, change, demotion, human_action, human_activity, variation]";
+        assertThat(actual).isEqualTo(expected);   
+    }
+
+    // 不存在的單字
+    @Test
+    public void testNullK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("dog");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[]";
+        assertThat(actual).isEqualTo(expected);   
+    }
+
+    // 無下義詞
+    @Test
+    public void testNoHyponymsK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("flashback");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[flashback]";
+        assertThat(actual).isEqualTo(expected);   
+    }
+
+    // 重複下義詞
+    @Test
+    public void testRepeatHyponymsK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            WORDS_FILE, TOTAL_COUNTS_FILE, SMALL_SYNSET_FILE, SMALL_HYPONYM_FILE);
+        List<String> words = List.of("happening");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 0, 0, 0, NgordnetQueryType.HYPONYMS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[adjustment, alteration, change, conversion, happening, increase, jump, leap, modification, mutation, natural_event, occurrence, occurrent, saltation, transition]";
+        assertThat(actual).isEqualTo(expected);   
+    }
 }
