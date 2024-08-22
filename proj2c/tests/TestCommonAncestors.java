@@ -31,7 +31,51 @@ public class TestCommonAncestors {
         assertThat(actual).isEqualTo(expected);
     }
 
-    // TODO: Add more unit tests (including edge case tests) here.
+    @Test
+    public void testEventK3() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            LARGE_WORDS_FILE, TOTAL_COUNTS_FILE, LARGE_SYNSET_FILE, LARGE_HYPONYM_FILE);
+        List<String> words = List.of("event");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 2015, 2020, 3, NgordnetQueryType.ANCESTORS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[case, process, state]";
+        assertThat(actual).isEqualTo(expected);
+    }
 
-    // TODO: Create similar unit test files for the k != 0 cases.
+    @Test
+    public void testEventK0() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            LARGE_WORDS_FILE, TOTAL_COUNTS_FILE, LARGE_SYNSET_FILE, LARGE_HYPONYM_FILE);
+        List<String> words = List.of("event");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 2015, 2020, 0, NgordnetQueryType.ANCESTORS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[abstract_entity, abstraction, attribute, case, circumstance, condition, consequence, effect, entity, event, issue, natural_phenomenon, outcome, phenomenon, physical_entity, physical_phenomenon, physical_process, process, psychological_feature, result, state, status, upshot]";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void testChangeK5() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            LARGE_WORDS_FILE, TOTAL_COUNTS_FILE, LARGE_SYNSET_FILE, LARGE_HYPONYM_FILE);
+        List<String> words = List.of("change");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 2000, 2020, 5, NgordnetQueryType.ANCESTORS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[change, good, process, result, whole]";
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    public void testChangeAndAlterationK5() {
+        NgordnetQueryHandler studentHandler = AutograderBuddy.getHyponymsHandler(
+            LARGE_WORDS_FILE, TOTAL_COUNTS_FILE, LARGE_SYNSET_FILE, LARGE_HYPONYM_FILE);
+        List<String> words = List.of("change", "alteration");
+    
+        NgordnetQuery nq = new NgordnetQuery(words, 2000, 2020, 5, NgordnetQueryType.ANCESTORS);
+        String actual = studentHandler.handle(nq);
+        String expected = "[act, action, change, entity, event]";
+        assertThat(actual).isEqualTo(expected);
+    }
 }
