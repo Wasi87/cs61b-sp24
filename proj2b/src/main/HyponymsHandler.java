@@ -26,8 +26,8 @@ import browser.NgordnetQueryHandler;
 
 public class HyponymsHandler extends NgordnetQueryHandler {
     private DirectedAcyclicGraph dag;
-    private HashMap wordtoIds;
-    private HashMap synsets;
+    private HashMap<String, Set<Integer>> wordtoIds;
+    private HashMap<Integer, Set<String>> synsets;
 
 
     public HyponymsHandler(DirectedAcyclicGraph dag, HashMap<Integer, Set<String>> synsets, HashMap<String, Set<Integer>> wordtoIds) {
@@ -72,7 +72,6 @@ public class HyponymsHandler extends NgordnetQueryHandler {
 
         if (count > 1) {
             Set<Integer> ids;
-            List<Set<Integer>> resultIdSets = new ArrayList<>();
             List<Set<String>> wordSets = new ArrayList<>();
             for (String word : set) {
                 // 同個單字

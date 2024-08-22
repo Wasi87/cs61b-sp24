@@ -1,7 +1,6 @@
 package main;
 
 import browser.NgordnetQueryHandler;
-import browser.NgordnetServer;
 
 
 public class AutograderBuddy {

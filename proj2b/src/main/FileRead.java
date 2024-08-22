@@ -51,10 +51,10 @@ public class FileRead {
     public DirectedAcyclicGraph getDag() {
         return dag;
     }
-    public HashMap getSynsets() {
+    public HashMap<Integer, Set<String>> getSynsets() {
         return synsets;
     }
-    public HashMap getWordToIds() {
+    public HashMap<String, Set<Integer>> getWordToIds() {
         return wordToIds;
     }
 }
